@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="apptheme_color">#f9e877</color>
+    <color name ="randomBlue">#D0E3FF</color>
+    <color name="hoofit">#EEEEED</color>
+    <color name="skyblue">#62B1F6</color>
+    <color name="textWhite">#FFFFFF</color>
+    <color name="pressed_actionbaritemcustom">#BFC2BE</color>
+    <color name="listbackground"> #BFC2BE</color>
+    <color name="carditem">#FFFFFF</color>
+    
+    <color name = "yellow">#FFA201</color>
+    <color name = "listYellow">#FFBD4A</color>
+    <color name = "lightorange">#FDE4BA</color>
+    <color name = "darkblue">#00429B</color>
+    <color name = "lightgreen">#FFACD341</color>
+
+</resources>
