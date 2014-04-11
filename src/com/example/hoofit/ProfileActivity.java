@@ -4,13 +4,19 @@ import java.util.Calendar;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,65 +36,92 @@ public class ProfileActivity extends Activity {
 	protected ActionBarDrawerToggle actionBarDrawerToggle;
 	protected ActionBar actionBar;
 	final ProfileActivity profile = this;
-	TextView dateOfBirth, height, weight;
-//	final NumberPicker numberPicker = (NumberPicker) findViewById(R.id.numberpicker);
-//	final NumberPicker fieldPicker = (NumberPicker) findViewById(R.id.fieldpicker);
-//	final NumberPicker unitPicker = (NumberPicker) findViewById(R.id.unitpicker);
-
+	TextView dateOfBirth, height, weight, gender, userName;
+	String strGender, strAge, strHeight, strWeight, strBirthYear, strBirthDay, strBirthMonth, strName;
+	Context context;
+	private SharedPreferences pref;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.app_profile);
 		setNavigationDrawer();
+		
+		pref = getApplicationContext().getSharedPreferences("APPLICATION_PREFERENCES", MODE_PRIVATE);
 
-		dateOfBirth = (TextView) findViewById(R.id.ageCalculator);
+		dateOfBirth = (TextView) findViewById(R.id.ageCalculator);	
+		userName = (TextView) findViewById(R.id.userName);
+		height = (TextView) findViewById(R.id.height);
+		gender = (TextView) findViewById(R.id.gender);
+		weight = (TextView) findViewById(R.id.weight);
 		
-		NumberPicker numberPicker = (NumberPicker) findViewById(R.id.numberpicker);
-		NumberPicker fieldPicker = (NumberPicker) findViewById(R.id.fieldpicker);
-		NumberPicker unitPicker = (NumberPicker) findViewById(R.id.unitpicker);
+		strGender = pref.getString("GENDER", "-1");
+		strAge = pref.getString("AGE", "-1");
+		strHeight = pref.getString("HEIGHT", "-1");
+		strWeight = pref.getString("WEIGHT", "-1");
+		strName = pref.getString("NAME", "-1");
+
+		//check if gender is set
+		if (strGender.equals("-1")){
+			gender.setText("enter your gender");
+		}
+		else{
+			gender.setText(strGender);
+			gender.setTextAppearance(profile, R.style.boldText);
+		}
 		
-		unitPicker.setMinValue(0);
-		unitPicker.setMaxValue(2);
-		unitPicker.setDisplayedValues(new String[]{"Yrs", "cms","kg"});
+		//check if age is set
+		if (strAge.equals("-1")){
+			dateOfBirth.setText("enter your DOB");
+		}
+		else{
+			dateOfBirth.setText(strAge);
+			dateOfBirth.setTextAppearance(profile, R.style.boldText);
+		}
 		
+		//check if height is set
+		if (strHeight.equals("-1")){
+			height.setText("enter your height");
+		}
+		else{
+			height.setText(strHeight + " cm");
+			height.setTextAppearance(profile, R.style.boldText);
+		}
 		
-		fieldPicker.setMinValue(0);
-		fieldPicker.setMaxValue(2);
-		fieldPicker.setWrapSelectorWheel(true);
-		fieldPicker.setDisplayedValues(new String[]{"Age", "Height", "Weight"});
-		fieldPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener(){
+		//check if weight is set
+		if (strWeight.equals("-1")){
+			weight.setText("enter your weight");
+		}
+		else{
+			weight.setText(strWeight + " lb");
+			weight.setTextAppearance(profile, R.style.boldText);
+		}
+		
+		//check if name is set
+		if (strName.equals("-1")){
+			userName.setText("enter your name");
+		}
+		else{
+			userName.setText(strName + "");
+			userName.setTextAppearance(profile, R.style.boldText);
+		}
+		
+		userName.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onValueChange(NumberPicker picker, int oldVal,
-					int newVal) {
+			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Log.d("fieldPicker", "old value: " + oldVal + "new value: " + newVal);
-				
+				showNamePicker();
+
 			}
-			
+
 		});
 		
-		numberPicker.setMaxValue(80);
-		numberPicker.setMinValue(18);
-		numberPicker.setWrapSelectorWheel(true);
-		numberPicker
-				.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-					@Override
-					public void onValueChange(NumberPicker picker, int oldVal,
-							int newVal) {
-						dateOfBirth.setText(newVal + " Yrs");
-						dateOfBirth
-								.setTextAppearance(profile, R.style.boldText);
-					}
-				});
-		height = (TextView) findViewById(R.id.height);
-		weight = (TextView) findViewById(R.id.weight);
 		height.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Toast.makeText(ProfileActivity.this, "Still working on this",
-						Toast.LENGTH_LONG).show();
+				showHeightPicker();
 
 			}
 
@@ -98,8 +132,18 @@ public class ProfileActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Toast.makeText(ProfileActivity.this, "Still working on this",
-						Toast.LENGTH_LONG).show();
+				showWeightPicker();
+
+			}
+
+		});
+		
+		gender.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showGenderPicker();
 
 			}
 
@@ -113,17 +157,75 @@ public class ProfileActivity extends Activity {
 		});
 
 	}
+	
+	private void showHeightPicker(){
+
+        PickerFragmentHeight editGenderDialog = new PickerFragmentHeight();
+        editGenderDialog.show(getFragmentManager(), "Height Picker");
+        
+	}
+	
+	private void showWeightPicker(){
+		
+        PickerFragmentWeight editWeightDialog = new PickerFragmentWeight();
+        editWeightDialog.show(getFragmentManager(), "Weight Picker");
+		
+	}
+	
+	private void showGenderPicker(){
+		
+        PickerFragmentGender editGenderDialog = new PickerFragmentGender();
+        editGenderDialog.show(getFragmentManager(), "Gender Picker");
+	}
+	
+	private void showNamePicker(){
+        PickerFragmentName editNameDialog = new PickerFragmentName();
+        editNameDialog.show(getFragmentManager(), "Name Picker");
+	}
+	
+	public void onHeightSelected(int ht){
+		height.setText(ht + " cm");
+		height.setTextAppearance(profile, R.style.boldText);
+	}
+	
+	public void onWeightSelected(int wt){
+		weight.setText(wt + " lb");
+		weight.setTextAppearance(profile, R.style.boldText);
+	}
+	
+	public void onGenderSelected(String genderString){
+		gender.setText(genderString);
+		gender.setTextAppearance(profile, R.style.boldText);
+		
+	}
+	
+	public void onNameEntered(String usr){
+		userName.setText(usr);
+		userName.setTextAppearance(profile, R.style.boldText);
+	}
+	
+
 
 	private void showDatePicker() {
 		DateOfBirthPickerFragment date = new DateOfBirthPickerFragment();
 		/**
 		 * Set Up Current Date Into dialog
 		 */
+		strBirthYear = pref.getString("BIRTH_YEAR", "-1");
+		strBirthMonth = pref.getString("BIRTH_MONTH", "-1");
+		strBirthDay = pref.getString("BIRTH_DAY", "-1");
 		Calendar calender = Calendar.getInstance();
 		Bundle args = new Bundle();
+		if (strBirthYear.equals("-1")){
 		args.putInt("year", calender.get(Calendar.YEAR));
 		args.putInt("month", calender.get(Calendar.MONTH));
 		args.putInt("day", calender.get(Calendar.DAY_OF_MONTH));
+		}
+		else{
+			args.putInt("year", Integer.parseInt(strBirthYear));
+			args.putInt("month", Integer.parseInt(strBirthMonth));
+			args.putInt("day", Integer.parseInt(strBirthDay));
+		}
 		date.setArguments(args);
 		/**
 		 * Set Call back to capture selected date
@@ -147,14 +249,15 @@ public class ProfileActivity extends Activity {
 			long difference = mills1 - mills2;
 			long differenceYears = (difference / (24 * 60 * 60 * 1000)) / 365;
 
-			// Toast.makeText(
-			// ProfileActivity.this,
-			// String.valueOf(year) + "-" + String.valueOf(monthOfYear)
-			// + "-" + String.valueOf(dayOfMonth),
-			// Toast.LENGTH_LONG).show();
 			dateOfBirth.setText(String.valueOf(year) + "-"
 					+ String.valueOf(monthOfYear + 1) + "-"
 					+ String.valueOf(dayOfMonth));
+			Editor editor = pref.edit();
+			editor.putString("AGE", differenceYears + " Yrs");
+			editor.putString("BIRTH_YEAR", year + "");
+			editor.putString("BIRTH_MONTH", monthOfYear + "");
+			editor.putString("BIRTH_DAY", dayOfMonth + "");
+			editor.commit();
 			dateOfBirth.setText(differenceYears + " Yrs");
 			dateOfBirth.setTextAppearance(profile, R.style.boldText);
 		}
