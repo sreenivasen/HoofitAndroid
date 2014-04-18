@@ -8,18 +8,124 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-
-
-    <TextView
-        android:id="@+id/historyText"
+    <TableLayout
+        android:id="@+id/profileTable"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight = "10dp"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        android:text="Settings"
-        android:textSize="20sp"
-        android:background="@color/lightgreen" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/carditem"
+        android:gravity="center" >
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@android:color/darker_gray" />
+
+        <TableRow
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:paddingTop="15dp" >
+
+            <TextView
+                android:layout_width="35dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Always run in the background"
+                android:textSize="14sp"
+                android:textStyle="bold" >
+            </TextView>
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textOff="OFF"
+                android:textOn="ON" />
+        </TableRow>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@android:color/darker_gray" />
+
+        <TableRow
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:paddingTop="15dp" >
+
+            <TextView
+                android:layout_width="35dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Use standard metrics (cm / kg)"
+                android:textSize="14sp"
+                android:textStyle="bold" >
+            </TextView>
+
+            <Switch
+                android:id="@+id/switch2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textOff="OFF"
+                android:textOn="ON" />
+        </TableRow>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@android:color/darker_gray" />
+
+        <TableRow
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:paddingTop="15dp" >
+
+            <TextView
+                android:layout_width="35dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Track my trail"
+                android:textSize="14sp"
+                android:textStyle="bold" >
+            </TextView>
+
+           <Switch
+                android:id="@+id/switch3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textOff="OFF"
+                android:textOn="ON" />
+        </TableRow>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@android:color/darker_gray" />
+
+
+    </TableLayout>
 
 </RelativeLayout>

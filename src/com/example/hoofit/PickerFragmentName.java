@@ -40,8 +40,10 @@ public class PickerFragmentName extends DialogFragment {
 		
 		pref = getActivity().getSharedPreferences("APPLICATION_PREFERENCES", 0);
 		enteredName = pref.getString("NAME", "-1");
+		if (!enteredName.equals("-1"))
+			userName.setText(enteredName);
 		
-		getDialog().setTitle("Height: 170 cm");
+		getDialog().setTitle("Enter your name");
 		done.setOnClickListener(new OnClickListener() {
 
 			@Override
