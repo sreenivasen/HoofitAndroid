@@ -26,6 +26,7 @@ public class AboutActivity extends Activity {
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 		setContentView(R.layout.app_about);
 		setNavigationDrawer();
 	}
@@ -61,6 +62,8 @@ public class AboutActivity extends Activity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
+		actionBarDrawerToggle.syncState();
+		
 		// just styling option
 		drawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);

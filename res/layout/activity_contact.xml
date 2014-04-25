@@ -8,18 +8,26 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|left"
+        android:inputType="textMultiLine"
+        android:lines="8"
+        android:maxLines="10"
+        android:minLines="6"
+        android:scrollbars="vertical" />
 
     <TextView
         android:id="@+id/historyText"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight = "10dp"
-        android:gravity="center"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
+        android:background="@color/lightgreen"
+        android:gravity="center"
         android:text="Contact Us"
-        android:textSize="20sp"
-        android:background="@color/lightgreen" />
+        android:textSize="20sp" />
 
 </RelativeLayout>

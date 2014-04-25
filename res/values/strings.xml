@@ -12,9 +12,18 @@
         <item>About Us</item>
         <item>Contact Us</item>
         <item>Sensors List</item>
+        <item>History</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="pref_send_report">Send crash reports</string>
+    <string name="pref_send_report_summary">Helps to fix bugs</string>
+    <string name="pref_sync_frequency">Sync frequency</string>
+    <string name="pref_sync_frequency_summary">Set the sync frequency</string>
+    <string name="pref_data">Upload data to cloud</string>
+    <string name="pref_data_summary">Upload data to cloud for better suggestions</string>
+    <string name="pref_user_profile">User Profile</string>
+    <string name="pref_update_setting">Update Settings</string>
 
 </resources>

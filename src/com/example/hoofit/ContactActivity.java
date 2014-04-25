@@ -25,6 +25,7 @@ public class ContactActivity extends Activity {
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 		setContentView(R.layout.app_contact);
 		setNavigationDrawer();
 	}
@@ -42,6 +43,8 @@ public class ContactActivity extends Activity {
 		// 2. App Icon
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+
+		
 		// 2.1 create ActionBarDrawerToggle
 		actionBarDrawerToggle = new ActionBarDrawerToggle(this, /*
 																 * host Activity
@@ -55,6 +58,8 @@ public class ContactActivity extends Activity {
 		// 2.2 Set actionBarDrawerToggle as the DrawerListener
 		drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
+		actionBarDrawerToggle.syncState();
+		
 		// 2.3 enable and show "up" arrow
 		actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);

@@ -2,10 +2,15 @@ package com.example.hoofit;
 
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.*;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -31,14 +36,27 @@ public class HomeActivity extends Activity implements SensorEventListener {
 	private SensorManager sensorManager;
 	boolean activityRunning;
 	TextView historyText;
+	
+	MyReceiver myReceiver = null;
+	Intent i;
+	
+	private HoofitSQLiteDataSource datasource;
+	Date date;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 		setContentView(R.layout.navigation_drawer);
 		setNavigationDrawer();
+		
+    	datasource = new HoofitSQLiteDataSource(this);
+		
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		
 		historyText = (TextView) findViewById(R.id.historyText);
+		
+		i= new Intent(this, ServiceSensorMonitor.class);
+	    Log.d( "HOME ACTIVITY", "onCreate/startService" );
 	}
 
 	@Override
@@ -51,6 +69,12 @@ public class HomeActivity extends Activity implements SensorEventListener {
         } else {
             Toast.makeText(this, "Count sensor not available!", Toast.LENGTH_LONG).show();
         }
+        
+        myReceiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();      
+        intentFilter.addAction(ServiceSensorMonitor.MY_ACTION);
+        startService(i);  
+        registerReceiver(myReceiver, intentFilter);
 
     }
 	
@@ -80,6 +104,8 @@ public class HomeActivity extends Activity implements SensorEventListener {
 		// 2.2 Set actionBarDrawerToggle as the DrawerListener
 		drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
+		actionBarDrawerToggle.syncState();
+		
 		// 2.3 enable and show "up" arrow
 		actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -115,6 +141,7 @@ public class HomeActivity extends Activity implements SensorEventListener {
 				break;
 			case 3:
 				Intent intent4 = new Intent(home, AboutActivity.class);
+				overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 				startActivity(intent4);
 				drawerLayout.closeDrawer(drawerListView);
 				break;
@@ -155,7 +182,7 @@ public class HomeActivity extends Activity implements SensorEventListener {
 	@Override
     protected void onPause() {
         super.onPause();
-        activityRunning = false;
+//        activityRunning = false;
         // if you unregister the last listener, the hardware will stop detecting step events
 //        sensorManager.unregisterListener(this); 
     }
@@ -169,10 +196,19 @@ public class HomeActivity extends Activity implements SensorEventListener {
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		// TODO Auto-generated method stub
+		Log.d( "HOME ACTIVITY", " sensor event change detected" );
+		datasource.open();
+    	date = new Date();
+    	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		if (activityRunning) {
-            historyText.setText(String.valueOf(event.values[0]) + " Steps Walked");
+            historyText.setText(String.valueOf(event.values[0]) + " Steps Walked" + "\n SQLite: " + datasource.getStepCountToday(formatter.format(date)));
+            Log.d("HOME ACTIVITY", "fetching value from SQLite: " + datasource.getStepCountToday(formatter.format(date)));
         }
 		
 	}
+	
+
 
 }
+
+

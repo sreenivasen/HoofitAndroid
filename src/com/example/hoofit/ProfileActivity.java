@@ -43,6 +43,7 @@ public class ProfileActivity extends Activity {
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 		setContentView(R.layout.app_profile);
 		setNavigationDrawer();
 		
@@ -289,6 +290,8 @@ public class ProfileActivity extends Activity {
 		// 2.2 Set actionBarDrawerToggle as the DrawerListener
 		drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
+		actionBarDrawerToggle.syncState();
+		
 		// 2.3 enable and show "up" arrow
 		actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
