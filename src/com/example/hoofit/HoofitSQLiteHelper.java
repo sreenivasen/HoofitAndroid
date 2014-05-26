@@ -7,6 +7,8 @@ import android.util.Log;
 
 public class HoofitSQLiteHelper extends SQLiteOpenHelper {
 
+	private static HoofitSQLiteHelper sInstance;
+	
 	public static final String TABLE_HOOFIT = "hoofit";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_STEPCOUNT = "step_count";
@@ -21,6 +23,17 @@ public class HoofitSQLiteHelper extends SQLiteOpenHelper {
 			+ " integer primary key autoincrement,  " + COLUMN_STEPCOUNT
 			+ " integer, " + COLUMN_DATE + " datetime );";
 
+	public static HoofitSQLiteHelper getInstance(Context context) {
+
+	    // Use the application context, which will ensure that you 
+	    // don't accidentally leak an Activity's context.
+	    // See this article for more information: http://bit.ly/6LRzfx
+	    if (sInstance == null) {
+	      sInstance = new HoofitSQLiteHelper(context.getApplicationContext());
+	    }
+	    return sInstance;
+	  }
+	
 	public HoofitSQLiteHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 	}

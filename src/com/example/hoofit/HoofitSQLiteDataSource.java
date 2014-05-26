@@ -13,24 +13,32 @@ public class HoofitSQLiteDataSource {
 	
 	private SQLiteDatabase database;
 	private HoofitSQLiteHelper dbhelper;
-	private AssetManager assetManager = null;
+	private AssetManager assetManager;
 	
 	public HoofitSQLiteDataSource(Context context){
-		dbhelper = new HoofitSQLiteHelper(context);
+		dbhelper = HoofitSQLiteHelper.getInstance(context);
 		assetManager = context.getAssets();
 	}
 	
-	public void open() throws SQLException{
+	public void openDatabaseToWrite() throws SQLException{
 		database = dbhelper.getWritableDatabase();
 	}
 	
-	public void close(){
+	public void closeDatabaseConnection(){
 		dbhelper.close();
 	}
 	
 	public boolean insertIntoHoofit(int count, String date){
-		Log.d("SQLite INSERT", "count: " + count + "date: " + date);
+		Log.d("SQLite INSERT", "count: " + count + " date: " + date);
 		SQLiteDatabase db = dbhelper.getReadableDatabase();
+		
+//		if(database.delete(HoofitSQLiteHelper.TABLE_HOOFIT , 
+//				HoofitSQLiteHelper.COLUMN_DATE + " ='" + "01/05/2014" + "'" , null) > 0)
+//			Log.d("SQLite ", "successfully deleted ");
+//		else
+//			Log.d("SQLite ", "unable to delete");
+		
+		
 		String selectQuery = "SELECT * FROM hoofit ORDER BY step_date DESC";
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		String recentDate = "";
@@ -48,7 +56,9 @@ public class HoofitSQLiteDataSource {
 				recentStepCount = Integer.parseInt(cursor.getString(cursor.getColumnIndex("step_count")));
 				id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("_id")));
 			}
-			cursor.close();
+			
+			
+			
 			
 		}
 		else {
@@ -56,11 +66,11 @@ public class HoofitSQLiteDataSource {
 			recentStepCount = 0;
 			id = 0;
 		}
-		
+		cursor.close();
 		Log.d("RECENT SQLite Values: ", "date: " + recentDate + " step count: " + recentStepCount);
 		
 		ContentValues values = new ContentValues();
-		
+		openDatabaseToWrite();
 		if (date.equals(recentDate)){
 			values.put(HoofitSQLiteHelper.COLUMN_DATE, date);
 			values.put(HoofitSQLiteHelper.COLUMN_STEPCOUNT, count);
@@ -69,8 +79,10 @@ public class HoofitSQLiteDataSource {
 		else {
 			values.put(HoofitSQLiteHelper.COLUMN_DATE, date);
 			values.put(HoofitSQLiteHelper.COLUMN_STEPCOUNT, count - recentStepCount);
-			long insertId = database.insert(HoofitSQLiteHelper.TABLE_HOOFIT,null, values);
 		}
+		getAllStepCounts();
+		db.close();
+		closeDatabaseConnection();
 		
 		return true;
 	}
@@ -90,12 +102,47 @@ public class HoofitSQLiteDataSource {
 				stepCount = Integer.parseInt(cursor.getString(cursor.getColumnIndex("step_count")));
 			}
 			cursor.close();
+			db.close();
 			
 		}
 		else {
 			stepCount = 0;
 		}	
 		return stepCount;
+	}
+	
+	public String getAllStepCounts(){
+		SQLiteDatabase db = dbhelper.getReadableDatabase();
+		String selectQuery = "SELECT * FROM hoofit ORDER BY step_date DESC";
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		StringBuffer stepCounts = new StringBuffer();
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			stepCounts.append(cursor.getString(cursor.getColumnIndex("step_count")));
+//			Log.d("DATASOURCE",cursor.getString(cursor.getColumnIndex("step_date")) + " : " + 
+//			cursor.getString(cursor.getColumnIndex("step_count")) );
+			stepCounts.append(" ");
+			cursor.moveToNext();
+		}
+		
+		
+		cursor.close();
+		db.close();
+		return stepCounts.toString();
+		
+	}
+	
+	public int getTotalNumberOfEntries(){
+		SQLiteDatabase db = dbhelper.getReadableDatabase();
+		String selectQuery = "SELECT * FROM hoofit ORDER BY step_date DESC";
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		int count =0;
+		if (cursor.getCount() > 0)
+			count = cursor.getCount();
+		
+		cursor.close();
+		db.close();
+		return count;
 	}
 
 }

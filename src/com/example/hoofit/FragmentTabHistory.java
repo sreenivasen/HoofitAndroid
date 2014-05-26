@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.sreenivasen.hoofit.R;
 
 public class FragmentTabHistory extends Fragment {
 	@Override

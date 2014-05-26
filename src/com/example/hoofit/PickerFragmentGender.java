@@ -14,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import com.sreenivasen.hoofit.R;
 
 public class PickerFragmentGender extends DialogFragment {
 

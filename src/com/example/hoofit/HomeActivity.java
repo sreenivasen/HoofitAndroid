@@ -1,31 +1,30 @@
 package com.example.hoofit;
 
-
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.hardware.*;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.sreenivasen.hoofit.R;
 
-public class HomeActivity extends Activity implements SensorEventListener {
+public class HomeActivity extends Activity{
 
 	protected String[] drawerListViewItems;
 	protected DrawerLayout drawerLayout;
@@ -33,14 +32,12 @@ public class HomeActivity extends Activity implements SensorEventListener {
 	protected ActionBarDrawerToggle actionBarDrawerToggle;
 	protected ActionBar actionBar;
 	final HomeActivity home = this;
-	private SensorManager sensorManager;
 	boolean activityRunning;
 	TextView historyText;
-	
-	MyReceiver myReceiver = null;
-	Intent i;
-	
-	private HoofitSQLiteDataSource datasource;
+
+	private BoundService serviceReference;
+	private boolean isBound;
+
 	Date date;
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,36 +45,104 @@ public class HomeActivity extends Activity implements SensorEventListener {
 		overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 		setContentView(R.layout.navigation_drawer);
 		setNavigationDrawer();
+
+		Log.d("HOME ACTIVITY", "creating service intent");
+		Intent serviceIntent = new Intent(this, BoundService.class);
+		startService(serviceIntent);
+//		sendNotification();
+		Log.d("HOME ACTIVITY", "onCreate - startService");
 		
-    	datasource = new HoofitSQLiteDataSource(this);
 		
-		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		ImageView historyIcon = (ImageView) findViewById(R.id.historyImage);
+		ImageView settingsIcon = (ImageView) findViewById(R.id.settingsImage);
+		ImageView infoIcon = (ImageView) findViewById(R.id.infoImage);
 		
-		historyText = (TextView) findViewById(R.id.historyText);
+//		stepsCountText = (TextView) findViewById(R.id.stepsCountText);
 		
-		i= new Intent(this, ServiceSensorMonitor.class);
-	    Log.d( "HOME ACTIVITY", "onCreate/startService" );
+		historyIcon.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Log.d("HOME", "history icon selected");
+				Intent intent = new Intent(home, BarChartActivity.class);
+				startActivity(intent);
+
+			}
+
+		});
+		
+		settingsIcon.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Log.d("HOME", "settings icon selected");
+				Intent intent = new Intent(home, SettingsActivity.class);
+				startActivity(intent);
+
+			}
+
+		});
+		
+		infoIcon.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Log.d("HOME", "history icon selected");
+				Intent intent = new Intent(home, AboutActivity.class);
+				startActivity(intent);
+
+			}
+
+		});
+
 	}
 
-	@Override
-    protected void onResume() {
-        super.onResume();
-        activityRunning = true;
-        Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if (countSensor != null) {
-            sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
-        } else {
-            Toast.makeText(this, "Count sensor not available!", Toast.LENGTH_LONG).show();
-        }
-        
-        myReceiver = new MyReceiver();
-        IntentFilter intentFilter = new IntentFilter();      
-        intentFilter.addAction(ServiceSensorMonitor.MY_ACTION);
-        startService(i);  
-        registerReceiver(myReceiver, intentFilter);
+	// interface for monitoring the state of the service
+	private ServiceConnection myConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			// called when the connection with the service has been
+			// established. gives us the service object to use so we can
+			// interact with the service.we have bound to a explicit
+			// service that we know is running in our own process, so we can
+			// cast its IBinder to a concrete class and directly access it.
+			Log.d("HOME ACTIVITY", "Bound service connected");
+			serviceReference = ((BoundService.MyLocalBinder) service)
+					.getService();
+			isBound = true;
+		}
 
-    }
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			// called when the connection with the service has been
+			// unexpectedly disconnected -- its process crashed.
+			// Because it is running in our same process, we should never
+			// see this happen.
+			Log.d("HOME ACTIVITY", "Problem: bound service disconnected");
+			serviceReference = null;
+			isBound = false;
+		}
+	};
+
+	// unbind from the service
+	private void doUnbindService() {
+		Log.d("HOME ACTIVITY", "Service Unbinding");
+		unbindService(myConnection);
+		isBound = false;
+	}
+
+	// bind to the service
+	private void doBindToService() {
+		Log.d("HOME ACTIVITY", "Service Binding");
+		if (!isBound) {
+			Intent bindIntent = new Intent(this, BoundService.class);
+			isBound = bindService(bindIntent, myConnection,
+					Context.BIND_AUTO_CREATE);
+		}
+	}
+
 	
+
 	private void setNavigationDrawer() {
 		// get list items from strings.xml
 		drawerListViewItems = getResources().getStringArray(R.array.items);
@@ -105,7 +170,7 @@ public class HomeActivity extends Activity implements SensorEventListener {
 		drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
 		actionBarDrawerToggle.syncState();
-		
+
 		// 2.3 enable and show "up" arrow
 		actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -126,7 +191,7 @@ public class HomeActivity extends Activity implements SensorEventListener {
 			Log.d("MAIN", "Drawer Item selection check");
 			switch (position) {
 			case 0:
-				
+
 				drawerLayout.closeDrawer(drawerListView);
 				break;
 			case 1:
@@ -155,6 +220,11 @@ public class HomeActivity extends Activity implements SensorEventListener {
 				startActivity(intent5);
 				drawerLayout.closeDrawer(drawerListView);
 				break;
+			case 6:
+				Intent intent6 = new Intent(home, BarChartActivity.class);
+				startActivity(intent6);
+				drawerLayout.closeDrawer(drawerListView);
+				break;
 			default:
 				drawerLayout.closeDrawer(drawerListView);
 
@@ -162,7 +232,7 @@ public class HomeActivity extends Activity implements SensorEventListener {
 
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -178,37 +248,69 @@ public class HomeActivity extends Activity implements SensorEventListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	@Override
-    protected void onPause() {
-        super.onPause();
-//        activityRunning = false;
-        // if you unregister the last listener, the hardware will stop detecting step events
-//        sensorManager.unregisterListener(this); 
-    }
 
+	// activity starting
 	@Override
-	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub
-		
+	protected void onStart() {
+		super.onStart();
+		Log.d("HOME ACTIVITY", "MainActivity - onStart");
+		// bind to the service
+		doBindToService();
+	}
+
+	// activity stopping
+	@Override
+	protected void onStop() {
+		Log.d("HOME ACTIVITY", "MainActivity - onStop");
+		super.onStop();
+		// unbind from the service
+		doUnbindService();
 	}
 
 	@Override
-	public void onSensorChanged(SensorEvent event) {
-		// TODO Auto-generated method stub
-		Log.d( "HOME ACTIVITY", " sensor event change detected" );
-		datasource.open();
-    	date = new Date();
-    	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		if (activityRunning) {
-            historyText.setText(String.valueOf(event.values[0]) + " Steps Walked" + "\n SQLite: " + datasource.getStepCountToday(formatter.format(date)));
-            Log.d("HOME ACTIVITY", "fetching value from SQLite: " + datasource.getStepCountToday(formatter.format(date)));
-        }
-		
+	protected void onPause() {
+		Log.d("HOME ACTIVITY", "MainActivity - onPause");
+		super.onPause();
+		// activityRunning = false;
+		// if you unregister the last listener, the hardware will stop detecting
+		// step events
+		// sensorManager.unregisterListener(this);
 	}
 	
+	@Override
+	protected void onResume() {
+		Log.d("HOME ACTIVITY", "MainActivity - onResume");
+		super.onResume();
+		// activityRunning = false;
+		// if you unregister the last listener, the hardware will stop detecting
+		// step events
+		// sensorManager.unregisterListener(this);
+	}
+	
+	@Override
+	protected void onRestart() {
+		Log.d("HOME ACTIVITY", "MainActivity - onRestart");
+		super.onRestart();
+		// activityRunning = false;
+		// if you unregister the last listener, the hardware will stop detecting
+		// step events
+		// sensorManager.unregisterListener(this);
+	}
+	
+//  the activity is being destroyed
+  @Override
+  protected void onDestroy() {
+      super.onDestroy();
+      Log.d("HOME ACTIVITY", "Destroying activity...");
+     /* it's not just being destroyed to rebuild due to orientation
+      change but genuinely being destroyed...for ever*/
+      if (isFinishing()) {
+          Log.d("HOME ACTIVITY", "activity is finishing");
+//          stop service as activity being destroyed and we won't use it any more
+          Intent intentStopService = new Intent(this, BoundService.class);
+          stopService(intentStopService);
+      }
+  }
 
 
 }
-
-

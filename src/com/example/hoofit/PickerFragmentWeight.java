@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import com.sreenivasen.hoofit.R;
 
 public class PickerFragmentWeight extends DialogFragment {
 

@@ -10,26 +10,111 @@
 
     <ImageView
         android:id="@+id/playImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="121dp"
-        android:src="@drawable/ic_action_play" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="75dp"
+        android:src="@drawable/hoofit_heart_beat" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/playImage"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@android:color/darker_gray" />
 
-    <TextView
-        android:id="@+id/historyText"
+    <TableLayout
+        android:id="@+id/tablelayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/playImage"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight = "10dp"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        android:text="History"
-        android:textSize="20dp"
-        android:background="@color/lightgreen" />
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/carditem" >
+
+        <TableRow
+            android:id="@+id/tableRowOne"
+            android:layout_marginBottom="5dp"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/historyImage"
+                android:layout_width="200dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:contentDescription="History"
+                android:src="@drawable/history_time" />
+
+            <ImageView
+                android:id="@+id/settingsImage"
+                android:layout_width="200dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:contentDescription="Settings"
+                android:src="@drawable/settings_gears" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRowTwo"
+            android:layout_marginBottom="5dp"
+            android:gravity="center" >
+
+            <TextView
+                android:id="@+id/historyText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="History"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/settingsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Settings"
+                android:textSize="12sp" />
+        </TableRow>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@android:color/darker_gray" />
+
+        <TableRow
+            android:id="@+id/tableRowThree"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/infoImage"
+                android:layout_width="150dp"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:contentDescription="Settings"
+                android:src="@drawable/info_sign" />
+        </TableRow>
+
+        <TableRow android:gravity="center" >
+
+            <TextView
+                android:id="@+id/infoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Info"
+                android:textSize="12sp" />
+        </TableRow>
+    </TableLayout>
+
 
 </RelativeLayout>

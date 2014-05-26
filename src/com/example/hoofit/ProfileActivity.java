@@ -4,9 +4,7 @@ import java.util.Calendar;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +14,6 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,10 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.ListView;
-import android.widget.NumberPicker;
-import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.sreenivasen.hoofit.R;
 
 public class ProfileActivity extends Activity {
 	protected String[] drawerListViewItems;
@@ -337,6 +332,11 @@ public class ProfileActivity extends Activity {
 			case 5:
 				Intent intent5 = new Intent(profile, MainActivity.class);
 				startActivity(intent5);
+				drawerLayout.closeDrawer(drawerListView);
+				break;
+			case 6:
+				Intent intent6 = new Intent(profile, BarChartActivity.class);
+				startActivity(intent6);
 				drawerLayout.closeDrawer(drawerListView);
 				break;
 			default:

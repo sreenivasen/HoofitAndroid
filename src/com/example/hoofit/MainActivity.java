@@ -9,16 +9,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ExpandableListActivity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.TextView;
+import com.sreenivasen.hoofit.R;
 
 public class MainActivity extends ExpandableListActivity {
 

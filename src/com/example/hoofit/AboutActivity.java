@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import com.sreenivasen.hoofit.R;
 
 
 public class AboutActivity extends Activity {
@@ -104,6 +105,11 @@ public class AboutActivity extends Activity {
 			case 5:
 				Intent intent5 = new Intent(about, MainActivity.class);
 				startActivity(intent5);
+				drawerLayout.closeDrawer(drawerListView);
+				break;
+			case 6:
+				Intent intent6 = new Intent(about, BarChartActivity.class);
+				startActivity(intent6);
 				drawerLayout.closeDrawer(drawerListView);
 				break;
 			default:

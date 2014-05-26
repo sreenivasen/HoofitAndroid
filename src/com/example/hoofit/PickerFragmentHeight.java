@@ -1,11 +1,8 @@
 package com.example.hoofit;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
+
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -16,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import com.sreenivasen.hoofit.R;
 
 public class PickerFragmentHeight extends DialogFragment {
 
@@ -58,7 +56,6 @@ public class PickerFragmentHeight extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				Log.d("GENDER PICKER", "value picked: "  + genderPicker.getValue());
 				Editor editor = pref.edit();
 				editor.putString("HEIGHT", genderPicker.getValue() + "");
@@ -74,17 +71,5 @@ public class PickerFragmentHeight extends DialogFragment {
 		return view;
 	}
 
-//	@Override
-//	public Dialog onCreateDialog(Bundle savedInstanceState) {
-//
-////		return new AlertDialog.Builder(getActivity())
-////				.setNegativeButton("Done",
-////						new DialogInterface.OnClickListener() {
-////							public void onClick(DialogInterface dialog,
-////									int whichButton) {
-////								// DO SOMETHING
-////							}
-////						}).create();
-//	}
 
 }
